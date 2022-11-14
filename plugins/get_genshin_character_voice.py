@@ -1,9 +1,8 @@
 import json
-import re
 from pathlib import Path
 import miraicle
-
 import requests
+import re
 
 p = Path('character.json')
 
@@ -65,12 +64,12 @@ def get_character_detail(character_id):
     Path(character_id).write_text(data, encoding='utf8')
 
 
-def solve_character_content_story(character_id):
+def solve_character_content_voice(character_id):
     character_information_list = []
     character_detail = Path(character_id).read_text(encoding='utf8')
     character_detail_json = json.loads(character_detail)
-    character_information_list.append(character_detail_json['data']['page']['modules'][5]['name'])
-    character_modules_json = json.loads(character_detail_json['data']['page']['modules'][5]['components'][0]['data'])
+    character_information_list.append(character_detail_json['data']['page']['modules'][6]['name'])
+    character_modules_json = json.loads(character_detail_json['data']['page']['modules'][6]['components'][0]['data'])
     for character_modules_object in character_modules_json['list']:
         character_information_list.append(character_modules_object['title'])
         character_information_list.append(character_modules_object['desc'])
@@ -82,16 +81,16 @@ def genshin_character_all(bot: miraicle.Mirai, msg: miraicle.GroupMessage):
     if Path('character.json').exists():
         character_all = Path('character.json').read_text(encoding='utf8')
         character_json = json.loads(character_all)
-        if msg.text[:4] == "故事信息":
+        if msg.text[:4] == "语音信息":
             input_message = msg.text[4:]
             if input_message in character_json:
                 if not Path(character_json[input_message]).exists():
                     get_character_detail(character_json[input_message])
-                message5 = solve_character_content_story(character_json[input_message])
-                reduce_html_process = re.compile(r'<[^>]+>', re.S)
-                for i in range(len(message5)):
-                    send_message5_str_reduceHtml = reduce_html_process.sub('', message5[i])
-                    bot.send_group_msg(group=msg.group, msg=send_message5_str_reduceHtml)
+                message6 = solve_character_content_voice(character_json[input_message])
+                for i in range(len(message6)):
+                    reduce_html_process = re.compile(r'<[^>]+>', re.S)
+                    send_message6_str_reduceHtml = reduce_html_process.sub('', message6[i])
+                    bot.send_group_msg(group=msg.group, msg=send_message6_str_reduceHtml)
     else:
         get_character_information()
         bot.send_group_msg(group=msg.group, msg=miraicle.Plain('正在爬取信息，请重新输入一次'))

@@ -117,3 +117,6 @@ def genshin_character_all(bot: miraicle.Mirai, msg: miraicle.GroupMessage):
                         reduce_html_process = re.compile(r'<[^>]+>', re.S)
                         send_message_str3_reduceHtml = reduce_html_process.sub('', message3[i])
                         bot.send_group_msg(group=msg.group, msg=send_message_str3_reduceHtml)
+    else:
+        get_character_information()
+        bot.send_group_msg(group=msg.group, msg=miraicle.Plain('正在爬取信息，请重新输入一次'))
