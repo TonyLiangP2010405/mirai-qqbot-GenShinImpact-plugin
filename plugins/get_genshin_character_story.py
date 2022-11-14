@@ -65,52 +65,30 @@ def get_character_detail(character_id):
     Path(character_id).write_text(data, encoding='utf8')
 
 
-def solve_character_detail_json(character_id):
+def solve_character_content_story(character_id):
     character_information_list = []
     character_detail = Path(character_id).read_text(encoding='utf8')
     character_detail_json = json.loads(character_detail)
-    character_information_list.append(character_detail_json['data']['page']['name'])
-    character_information_list.append(character_detail_json['data']['page']['desc'])
-    character_information_list.append(character_detail_json['data']['page']['icon_url'])
-    character_information_list.append(character_detail_json['data']['page']['header_img_url'])
-    # 属性
-    character_information_list.append(character_detail_json['data']['page']['modules'][0]['name'])
-    character_modules_json = json.loads(character_detail_json['data']['page']['modules'][0]['components'][0]['data'])
+    character_information_list.append(character_detail_json['data']['page']['modules'][5]['name'])
+    character_modules_json = json.loads(character_detail_json['data']['page']['modules'][5]['components'][0]['data'])
     for character_modules_object in character_modules_json['list']:
-        character_information_list.append(character_modules_object['key'] + ":" + character_modules_object['value'][0])
-    # 突破
-    character_information_list.append(character_detail_json['data']['page']['modules'][1]['name'])
-    character_modules_json2 = json.loads(character_detail_json['data']['page']['modules'][1]['components'][0]['data'])
-    for character_modules_object2 in character_modules_json2['list']:
-        character_information_list.append(character_modules_object2['key'])
-        for character_modules_object2_detail_information in character_modules_object2['combatList']:
-            character_information_list.append(character_modules_object2_detail_information['key'] + ":" +
-                                              character_modules_object2_detail_information['values'][1])
-
+        character_information_list.append(character_modules_object['title'])
+        character_information_list.append(character_modules_object['desc'])
     return character_information_list
 
 
 @miraicle.Mirai.receiver('GroupMessage')
-def genshin_character_basic_information(bot: miraicle.Mirai, msg: miraicle.GroupMessage):
+def genshin_character_all(bot: miraicle.Mirai, msg: miraicle.GroupMessage):
     if Path('character.json').exists():
         character_all = Path('character.json').read_text(encoding='utf8')
         character_json = json.loads(character_all)
-        if msg.text[:4] == "基础信息":
+        if msg.text[:4] == "故事信息":
             input_message = msg.text[4:]
             if input_message in character_json:
                 if not Path(character_json[input_message]).exists():
                     get_character_detail(character_json[input_message])
-                message = solve_character_detail_json(character_json[input_message])
-                send_message = []
-                for i in range(len(message)):
-                    if i == 2 or i == 3:
-                        bot.send_group_msg(group=msg.group, msg=miraicle.Image(url=message[i]))
-                    else:
-                        send_message.append(message[i])
-                send_message_str = "".join(str(i + "\n") for i in send_message)
+                message5 = solve_character_content_story(character_json[input_message])
                 reduce_html_process = re.compile(r'<[^>]+>', re.S)
-                send_message_str_reduceHtml = reduce_html_process.sub('', send_message_str)
-                bot.send_group_msg(group=msg.group, msg=send_message_str_reduceHtml)
-    else:
-        get_character_information()
-        bot.send_group_msg(group=msg.group, msg=miraicle.Plain('正在爬取信息，请重新输入一次'))
+                for i in range(len(message5)):
+                    send_message5_str_reduceHtml = reduce_html_process.sub('', message5[i])
+                    bot.send_group_msg(group=msg.group, msg=send_message5_str_reduceHtml)

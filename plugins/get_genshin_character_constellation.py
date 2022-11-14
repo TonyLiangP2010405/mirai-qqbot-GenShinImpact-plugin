@@ -88,15 +88,10 @@ def genshin_character_basic_information(bot: miraicle.Mirai, msg: miraicle.Group
                 reduce_html_process = re.compile(r'<[^>]+>', re.S)
                 if not Path(character_json[input_message]).exists():
                     get_character_detail(character_json[input_message])
-                    message4 = solve_character_content_mingzhizuo(character_json[input_message])
-                    for i in range(len(message4)):
-                        send_message4_str_reduceHtml = reduce_html_process.sub('', message4[i])
-                        bot.send_group_msg(group=msg.group, msg=send_message4_str_reduceHtml)
-                else:
-                    message4 = solve_character_content_mingzhizuo(character_json[input_message])
-                    for i in range(len(message4)):
-                        send_message4_str_reduceHtml = reduce_html_process.sub('', message4[i])
-                        bot.send_group_msg(group=msg.group, msg=send_message4_str_reduceHtml)
+                message4 = solve_character_content_mingzhizuo(character_json[input_message])
+                for i in range(len(message4)):
+                    send_message4_str_reduceHtml = reduce_html_process.sub('', message4[i])
+                    bot.send_group_msg(group=msg.group, msg=send_message4_str_reduceHtml)
     else:
         get_character_information()
         bot.send_group_msg(group=msg.group, msg=miraicle.Plain('正在爬取信息，请重新输入一次'))
